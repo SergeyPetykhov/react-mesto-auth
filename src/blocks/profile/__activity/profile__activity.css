@@ -1,0 +1,24 @@
+.profile__activity {
+  width: 100%;
+  margin: 16px 0 0;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.22;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 1024px) {
+  .profile__activity {
+    margin: 8px 0 0;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .profile__activity {
+    font-size: 14px;
+    line-height: 1.21;
+  }
+}

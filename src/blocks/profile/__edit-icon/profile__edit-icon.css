@@ -1,0 +1,10 @@
+.profile__edit-icon {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  top: calc(50% - 13px);
+  left: calc(50% - 13px);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+

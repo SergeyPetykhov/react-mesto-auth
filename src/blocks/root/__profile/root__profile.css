@@ -1,0 +1,9 @@
+.root__profile {
+  margin: 40px auto 0;
+}
+
+@media screen and (max-width: 680px) {
+  .root__profile {
+    margin: 42px auto 0;
+  }
+}
