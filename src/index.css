@@ -16,6 +16,9 @@
 
 /***** header *****/
 @import url('./blocks/header/header.css');
+@import url('./blocks/header/__user-email/header__user-email.css');
+@import url('./blocks/header/__info-container/header__info-container.css');
+@import url('./blocks/header/__login-out-button/header__login-out-button.css');
 
 /***** logo *****/
 @import url('./blocks/logo/logo.css');
@@ -95,6 +98,39 @@
 @import url('./blocks/popup-image/__img/popup-image__img.css');
 @import url('./blocks/popup-image/__figcaption/popup-image__figcaption.css');
 
+/***** popup-infoTooltip *****/
+@import url('./blocks/popup-infoTooltip/popup-infoTooltip.css');
+@import url('./blocks/popup-infoTooltip/__container/popup-infoTooltip__container.css');
+@import url('./blocks/popup-infoTooltip/__close-button/popup-infoTooltip__close-button.css');
+@import url('./blocks/popup-infoTooltip/__title/popup-infoTooltip__title.css');
+@import url('./blocks/popup-infoTooltip/__img/popup-infoTooltip__img.css');
+
+/***** register *****/
+@import url('./blocks/register/register.css');
+@import url('./blocks/register/__container/register__container.css');
+@import url('./blocks/register/__close-button/register__close-button.css');
+@import url('./blocks/register/__form/register__form.css');
+@import url('./blocks/register/__title/register__title.css');
+@import url('./blocks/register/__save-button/register__save-button.css');
+@import url('./blocks/register/__text/register__text.css');
+@import url('./blocks/register/__link/register__link.css');
+
+/***** form-register *****/
+@import url('./blocks/form-register/__input-container/form-register__input-container.css');
+@import url('./blocks/form-register/__item/form-register__item.css');
+
+/***** login *****/
+@import url('./blocks/login/login.css');
+@import url('./blocks/login/__container/login__container.css');
+@import url('./blocks/login/__close-button/login__close-button.css');
+@import url('./blocks/login/__form/login__form.css');
+@import url('./blocks/login/__title/login__title.css');
+@import url('./blocks/login/__save-button/login__save-button.css');
+
+/***** form-login *****/
+@import url('./blocks/form-login/__input-container/form-login__input-container.css');
+@import url('./blocks/form-login/__item/form-login__item.css');
+
 /***** error *****/
 @import url('./blocks/error/error.css');
 
@@ -112,5 +148,6 @@
 /***** popup-delete-elements *****/
 @import url('./blocks/popup-delete-elements/__save-button/popup-delete-elements__save-button.css');
 
-/***** popup-avatar*****/
+/***** popup-avatar-save-button*****/
 @import url('./blocks/popup-avatar/__save-button/popup-avatar__save-button.css');
+

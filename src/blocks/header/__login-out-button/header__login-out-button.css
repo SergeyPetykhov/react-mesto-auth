@@ -1,0 +1,17 @@
+.header__login-out-button {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  color: #fff;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.22;
+  transition: opacity 0.5s;
+}
+
+.header__login-out-button:hover {
+  opacity: 0.6;
+  cursor: pointer;
+}

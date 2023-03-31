@@ -1,20 +1,29 @@
+import api from '../utils/api'
+import apiAuth from '../utils/apiAuth';
 import React from 'react';
-import Header from './Header.js';
 import Main from './Main.js';
-import Footer from './Footer.js';
 import ImagePopup from './ImagePopup.js';
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
 import DeletePlacePopup from './DeletePlacePopup.js';
-import api from '../utils/api'
+import RegistrationSuccessPopup from './RegistrationSuccessPopup.js';
+import RegistrationFailurePopup from './RegistrationFailurePopup.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
+import Register from './Register.js';
+import Login from './Login.js';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute.js'
+import Error404 from './error404.js';
+
 
 function App() {
+  const navigate = useNavigate();
   const [userData, setUserData] = React.useState({});
   const [cards, setCards] = React.useState([]);
   const [cardToBeDeleted, setCardToBeDeleted] = React.useState({});
   const [selectedCard, setSelectedCard] = React.useState(null);
+
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [isEditAvatarPopupLoading, setIsEditAvatarPopupLoading] = React.useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
@@ -23,8 +32,17 @@ function App() {
   const [isAddPlacePopupLoading, setIsAddPlacePopupLoading] = React.useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = React.useState(false);
   const [isDeletePopupLoading, setIsDeletePopupLoading] = React.useState(false);
+  const [isRegistrationSuccessPopupOpen, setIsRegistrationSuccessPopupOpen] = React.useState(false);
+  const [isRegistrationFailurePopupOpen, setIsRegistrationFailurePopupOpen] = React.useState(false);
+
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [userRegData, setUserRegData] = React.useState({});
+  const [userAuthData, setUserAuthData] = React.useState({});
+  const [isRegisterLoading, setIsRegisterLoading] = React.useState(false);
+  const [isLoginLoading, setIsLoginLoading] = React.useState(false);
 
   React.useEffect(() => {
+    tokenCheck();
     Promise.all([api.getUserData(), api.getInitialCards()])
       .then(([userData, cards]) => {
         setUserData(userData);
@@ -35,6 +53,25 @@ function App() {
       })
   }, []);
 
+  const tokenCheck = () => {
+    if (localStorage.getItem('jwt')) {
+      const jwt = localStorage.getItem('jwt');
+      apiAuth.getToken(jwt)
+        .then((res) => {
+          if (res) {
+            setUserAuthData(res.data);
+            setLoggedIn(true);
+            navigate("/", { replace: true });
+          }
+        })
+    }
+  }
+
+  const signOut = () => {
+    localStorage.removeItem('jwt');
+    setLoggedIn(false)
+  }
+
   const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(true);
   }
@@ -43,7 +80,7 @@ function App() {
     setIsEditProfilePopupOpen(true);
   }
 
-  const handleAddCardClick = () => {;
+  const handleAddCardClick = () => {
     setIsAddPlacePopupOpen(true);
   }
 
@@ -139,62 +176,145 @@ function App() {
       });
   }
 
+  /* user authentification*/
+  
+  const handleRegisrtationUser = (registrationData) => {
+    setIsRegisterLoading(true);
+    apiAuth.registrationUser(registrationData)
+      .then((res) => {
+        setUserRegData(res);
+        setIsRegistrationSuccessPopupOpen(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsRegistrationFailurePopupOpen(true);
+      })
+      .finally(() => {
+        setIsRegisterLoading(false);
+      });
+  }
+
+  const handleAuthorizationUser = (authorizationData) => {
+    setIsLoginLoading(true);
+    apiAuth.authorizationUser(authorizationData)
+      .then((res) => {
+        localStorage.setItem('jwt', res.token)
+        handleGetToken(res.token);
+        setLoggedIn(true);
+        navigate("/", { replace: true });
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsRegistrationFailurePopupOpen(true);
+      })
+      .finally(() => {
+        setIsLoginLoading(false);
+      });
+  }
+
+  const handleGetToken = (token) => {
+    apiAuth.getToken(token)
+      .then((res) => {
+        setUserAuthData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  const closeRegistrationSuccessPopup = () => {
+    setIsRegistrationSuccessPopupOpen(false);
+    navigate("/signin", { replace: true });
+  }
+
   const closeAllPopups = () => {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsDeletePopupOpen(false);
+    setIsRegistrationFailurePopupOpen(false)
     setSelectedCard(null);
   }
 
   return (
     <CurrentUserContext.Provider value={userData}>
-        <Header />
+      <Routes>
 
-        <Main
-          onEditAvatar={handleEditAvatarClick}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddCardClick}
-          onCardClick={handleCardClick}
-          onCardLikeClick={handleCardLikeClick}
-          onCardDeleteButtonClick={handleDeleteCardClick}
-          cards={cards}
+        <Route
+          path="/"
+          element={<ProtectedRoute
+            Component={Main}
+            loggedIn={loggedIn}
+            signOut={signOut}
+            onEditAvatar={handleEditAvatarClick}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddCardClick}
+            onCardClick={handleCardClick}
+            onCardLikeClick={handleCardLikeClick}
+            onCardDeleteButtonClick={handleDeleteCardClick}
+            cards={cards}
+            userAuthData={userAuthData}
+          />}
         />
 
-        <Footer />
-
-        <ImagePopup
-          card={selectedCard}
-          onClose={closeAllPopups}
+        <Route
+          path="/signup"
+          element={<Register isLoading={isRegisterLoading} onRegistrationUser={handleRegisrtationUser} />}
         />
 
-        <EditAvatarPopup
-          isOpen={isEditAvatarPopupOpen}
-          isLoading={isEditAvatarPopupLoading}
-          onClose={closeAllPopups}
-          onUpdateAvatar={handleUpdateAvatar}
+        <Route
+          path="/signin"
+          element={<Login isLoading={isLoginLoading} onAuthorizationUser={handleAuthorizationUser} />}
         />
+        <Route
+          path="*"
+          element={<Error404 />}
+        />
+      </Routes>
 
-        <EditProfilePopup
-          isOpen={isEditProfilePopupOpen}
-          isLoading={isEditProfilePopupLoading}
-          onClose={closeAllPopups}
-          onUpdateUser={handleUpdateUser}
-        />
+      <ImagePopup
+        card={selectedCard}
+        onClose={closeAllPopups}
+      />
 
-        <AddPlacePopup
-          isOpen={isAddPlacePopupOpen}
-          isLoading={isAddPlacePopupLoading}
-          onClose={closeAllPopups}
-          onAddPlace={handleAddCard}
-        />
+      <EditAvatarPopup
+        isOpen={isEditAvatarPopupOpen}
+        isLoading={isEditAvatarPopupLoading}
+        onClose={closeAllPopups}
+        onUpdateAvatar={handleUpdateAvatar}
+      />
 
-        <DeletePlacePopup
-          isOpen={isDeletePopupOpen}
-          isLoading={isDeletePopupLoading}
-          onClose={closeAllPopups}
-          onCardDeleteSubmitButtonClick={handleCardDeleteSubmitButtonClick}
-        />
+      <EditProfilePopup
+        isOpen={isEditProfilePopupOpen}
+        isLoading={isEditProfilePopupLoading}
+        onClose={closeAllPopups}
+        onUpdateUser={handleUpdateUser}
+      />
+
+      <AddPlacePopup
+        isOpen={isAddPlacePopupOpen}
+        isLoading={isAddPlacePopupLoading}
+        onClose={closeAllPopups}
+        onAddPlace={handleAddCard}
+      />
+
+      <DeletePlacePopup
+        isOpen={isDeletePopupOpen}
+        isLoading={isDeletePopupLoading}
+        onClose={closeAllPopups}
+        onCardDeleteSubmitButtonClick={handleCardDeleteSubmitButtonClick}
+      />
+
+      <RegistrationSuccessPopup
+        isOpen={isRegistrationSuccessPopupOpen}
+        onClose={closeRegistrationSuccessPopup}
+      />
+
+      <RegistrationFailurePopup
+        isOpen={isRegistrationFailurePopupOpen}
+        onClose={closeAllPopups}
+      />
+
     </CurrentUserContext.Provider>
   );
 }

@@ -1,0 +1,27 @@
+.register__save-button {
+  padding: 0;
+  border: 0;
+  width: 100%;
+  height: 50px;
+  margin-bottom: 15px;
+  color: #000;
+  background-color: #fff;
+  border-radius: 2px;
+  font-size: 18px;
+  line-height: 1.22;
+  transition: opacity 0.5s;
+}
+
+@media screen and (max-width: 680px) {
+  .register__save-button {
+    margin-bottom: 15px;
+    height: 46px;
+    font-size: 14px;
+    line-height: 1.21;
+  }
+}
+
+.register__save-button:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}

@@ -1,0 +1,9 @@
+.register__form {
+  margin-top: 50px;
+}
+
+@media screen and (max-width: 680px) {
+  .register__form {
+    margin-top: 75px;
+  }
+}

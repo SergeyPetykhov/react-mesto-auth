@@ -12,7 +12,7 @@ function PopupWithForm({ namePopup, nameForm, title, valueSubmitButton, isOpen, 
           onSubmit={onSubmit}
         >
           {children}
-          <input type="submit" className="popup__button-save popup__button-save_avalible popup-avatar__save-button"
+          <input type="submit" className="popup__button-save popup__button-save_avalible"
             value={valueSubmitButton} />
         </form>
       </div>
