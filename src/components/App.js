@@ -16,7 +16,6 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute.js'
 import Error404 from './error404.js';
 
-
 function App() {
   const navigate = useNavigate();
   const [userData, setUserData] = React.useState({});
@@ -42,18 +41,23 @@ function App() {
   const [isLoginLoading, setIsLoginLoading] = React.useState(false);
 
   React.useEffect(() => {
-    tokenCheck();
-    Promise.all([api.getUserData(), api.getInitialCards()])
-      .then(([userData, cards]) => {
-        setUserData(userData);
-        setCards(cards);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+    checkToken();
   }, []);
 
-  const tokenCheck = () => {
+  React.useEffect(() => {
+    if (loggedIn) {
+      Promise.all([api.getUserData(), api.getInitialCards()])
+        .then(([userData, cards]) => {
+          setUserData(userData);
+          setCards(cards);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
+  }, [loggedIn]);
+
+  const checkToken = () => {
     if (localStorage.getItem('jwt')) {
       const jwt = localStorage.getItem('jwt');
       apiAuth.getToken(jwt)
@@ -177,7 +181,7 @@ function App() {
   }
 
   /* user authentification*/
-  
+
   const handleRegisrtationUser = (registrationData) => {
     setIsRegisterLoading(true);
     apiAuth.registrationUser(registrationData)
@@ -199,7 +203,7 @@ function App() {
     apiAuth.authorizationUser(authorizationData)
       .then((res) => {
         localStorage.setItem('jwt', res.token)
-        handleGetToken(res.token);
+        setUserAuthData(authorizationData);
         setLoggedIn(true);
         navigate("/", { replace: true });
       })
@@ -209,16 +213,6 @@ function App() {
       })
       .finally(() => {
         setIsLoginLoading(false);
-      });
-  }
-
-  const handleGetToken = (token) => {
-    apiAuth.getToken(token)
-      .then((res) => {
-        setUserAuthData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
       });
   }
 
